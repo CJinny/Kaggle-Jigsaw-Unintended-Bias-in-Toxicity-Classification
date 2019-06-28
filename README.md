@@ -27,20 +27,39 @@ Jigsaw Unintended Bias in Toxicity Classification competition on Kaggle
          custom_loss += F.binary_cross_entropy_with_logits(y_pred[:,1+i], y_true[:,2+i])
      return custom_loss
  ```
-Basically, every comment gets an initial weight of 0.25, then comments which mention each identity (**Subgroup**) will get a 0.25 additional weight, then comments which are toxic but didn't mention identity will get 0.25 additional weight, and last comments which are not toxic but mention identity will get 0.25 additional weight. The custom loss will be considering both overall target prediction loss as well as loss of identity predictions.
+Basically, every comment gets an initial weight of 0.25, then comments which mention each identity (**Subgroup**) will get a 0.25 additional weight, then comments which are toxic but didn't mention identity will get 0.25 additional weight, and last comments which are not toxic but mention identity will get 0.25 additional weight. The custom loss will be considering both overall target prediction loss as well as loss of auxilary labels.
 
-- **Combine a variety of models**: We started with a bilateral LSTM model using FastAI framework, but then quickly move to a more powerful model: BERT(Bidirectional Encoder Representations from Transformers). Several pretrained models were used: 
+- **Combine a variety of models**. We started with a bilateral LSTM model using FastAI framework, but then quickly move to a more powerful model: BERT(Bidirectional Encoder Representations from Transformers). Several pretrained models were used: 
   1. BERT-Large, Uncased (Whole Word Masking) 
   2. BERT-Base, Uncased
   3. GPT-2, Uncased
+We have discovered that `OpenAIAdam` performs better than `BertAdam` on validation set, hence we chose to use `OpenAIAdam` for our model optimizer.
 
-We use a 4-stage approach to train our models, namely: 
-  1. Stage 1
-  2. Stage 2
-  3. Stage 3
-  4. Stage 4
+We also attempted many model frameworks:
+  1. Pytorch, Many thanks to [hunggingface](https://github.com/huggingface/pytorch-pretrained-BERT) for this wonderful Pytorch model for BERT. The cool thing with pytorch BERT is that it enables us to use `gradient_accumulation_steps` to control how frequently we want gradients to be accumulated.
+  2. FastAI, The cyclical learning rates are always useful.
+  3. Keras, I haven't used Keras but my teammate had and was able to achieve good leaderboard score with it.
 
-In order to make our model train train faster for BERT-Large, we also increased our batch-size from 32 to 96.
+For my pytorch BERT base model training use a 4-stage approach to train our models, namely: 
+  1. Stage 1: `lr=2e-5`, `num_train_optimization_steps = int(2*len(train_loader)/batch_size/accumulation_steps)`
+  2. Stage 2: `lr=1.5e-5`, `num_train_optimization_steps = int(1.5*2*len(train_loader)/batch_size/accumulation_steps)`
+  3. Stage 3: `lr=1e-5`, `num_train_optimization_steps = int(1*2*len(train_loader)/batch_size/accumulation_steps)`
+  4. Stage 4: `lr=0.5e-5`, `num_train_optimization_steps = int(0.5*2*len(train_loader)/batch_size/accumulation_steps)`
+
+Each stage will train 0.5 epoch so 2 epochs in total. In order to make our model train train faster for BERT-Large, we also increased our batch-size from 32 to 96.
+
+
+What I have learned from this competition:
+
+
+What we could have done better:
+
+- **Use a better custom loss function**. We attempted to incorporate identity columns in our custom loss functioon but were not successful during model training.
+
+- **Use static features**. We could have added additional features such as number of exclamation marks or number of emojis which could have been useful.
+
+- **Use the XLNet pretrained model**. This mdoel was published just a few days before the competition ends, but we could have done better.
+
 
 
 
