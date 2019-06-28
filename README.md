@@ -29,7 +29,18 @@ Jigsaw Unintended Bias in Toxicity Classification competition on Kaggle
  ```
 Basically, every comment gets an initial weight of 0.25, then comments which mention each identity (**Subgroup**) will get a 0.25 additional weight, then comments which are toxic but didn't mention identity will get 0.25 additional weight, and last comments which are not toxic but mention identity will get 0.25 additional weight. The custom loss will be considering both overall target prediction loss as well as loss of identity predictions.
 
-- **Combine a variety of models**:
+- **Combine a variety of models**: We started with a bilateral LSTM model using FastAI framework, but then quickly move to a more powerful model: BERT(Bidirectional Encoder Representations from Transformers). Several pretrained models were used: 
+  1. BERT-Large, Uncased (Whole Word Masking) 
+  2. BERT-Base, Uncased
+  3. GPT-2, Uncased
+
+We use a 4-stage approach to train our models, namely: 
+  1. Stage 1
+  2. Stage 2
+  3. Stage 3
+  4. Stage 4
+
+In order to make our model train train faster for BERT-Large, we also increased our batch-size from 32 to 96.
 
 
 
