@@ -2,7 +2,7 @@
 Jigsaw Unintended Bias in Toxicity Classification competition on Kaggle
 
 ## Summary of this competition
-** This is a Natural Language Processing competition in which we were asked to detect toxic comments and at the same time reduce prediction errors specifically for comments that mention certain identities.
+ - **Summary**: This is a Natural Language Processing competition in which we were asked to detect toxic comments and at the same time reduce prediction errors specifically for comments that mention certain identities.
 
 
 
