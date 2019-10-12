@@ -1,5 +1,5 @@
 # Kaggle-Jigsaw-Unintended-Bias-in-Toxicity-Classification
-Jigsaw Unintended Bias in Toxicity Classification competition on Kaggle
+NLP competition on Kaggle
 
 ## Summary of this competition
  - **Summary**: This is a Natural Language Processing competition in which we were asked to detect toxic comments and at the same time reduce prediction errors specifically for comments that mention certain identities (unintended bias).
